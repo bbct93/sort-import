@@ -15,7 +15,7 @@ program
     .description('sort import')
     .action((source, destination) => {
         overWriteSortImport(source)
-        console.log(chalk.green('sort complete~'))
+        console.log(chalk.green('sort complete~🚀'))
     });
 
 const { sortJSImport } = require("../parserJs.js")
@@ -35,12 +35,10 @@ function overWriteSortImport(file) {
         }
 
         if(isVueFile && rule.test(initCode)) {
-            console.log('vueFIle')
             // 需要处理
             needFormatCode = initCode.match(rule)[0]
             const afterFormatCode = sortJSImport(needFormatCode)
             newCode = initCode.replace(rule, afterFormatCode)
-            console.log('newVue--->', newCode)
         }
 
         if(isJSFile) {
@@ -50,7 +48,7 @@ function overWriteSortImport(file) {
 
         // outputFile会覆盖掉原有内容
         fs.outputFile(file, newCode, err => {
-            console.log(err) // => null
+            throw new ReferenceError(err);
         })
     }))
 }
