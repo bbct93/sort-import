@@ -1,24 +1,23 @@
 #!/usr/bin/env node
-const commander = require('commander'); // (normal include)
+const commander = require('commander');
 const chalk = require("chalk");
-// const ora = require('ora');
 const fs = require("fs-extra");
 const fs2 = require("fs")
-const program = new commander.Command();
 const package = require('../package.json');
+const parse = require("@babel/parser").parse;
+const generate = require("@babel/generator").default;
+const program = new commander.Command();
 
-// const spinner = ora('sorting import...')
 
 program
     .version(package.version)
-    .command('sort <source> [destination]')
+    .command('sort <source>')
     .description('sort import')
-    .action((source, destination) => {
+    .action((source) => {
         overWriteSortImport(source)
         console.log(chalk.green('sort complete~🚀'))
     });
 
-const { sortJSImport } = require("../parserJs.js")
 
 function overWriteSortImport(file) {
     fs2.readFile(file, 'utf8', ((err, initCode) => {
@@ -48,18 +47,28 @@ function overWriteSortImport(file) {
 
         // outputFile会覆盖掉原有内容
         fs.outputFile(file, newCode, err => {
-            throw new ReferenceError(err);
+            if(err) {
+                throw new ReferenceError(err);
+            }
         })
     }))
 }
 
-program.parse(process.argv);
+function sortJSImport(code) {
+    // parse 解析
+    const ast = parse(code, { sourceType: "module" });
+    // 所有import节点
+    const importDeclarationList = ast.program.body.filter(item => item.type === 'ImportDeclaration');
+    const firstList = importDeclarationList.filter(item => /^@[a-zA-Z]/.test(item.source.value))
+    const secondList = importDeclarationList.filter(item => /^@\//.test(item.source.value))
+    const thirdLit = importDeclarationList.filter(item => /^\//.test(item.source.value))
+    const lastList = importDeclarationList.filter(item => /^\./.test(item.source.value))
 
+    const rightList = [...firstList, ... secondList, ... thirdLit, ...lastList];
+    ast.program.body = ast.program.body.filter(item => item.type !== 'ImportDeclaration');
+    ast.program.body = [...rightList, ...ast.program.body];
+    let newCode = generate(ast).code;
+    return newCode
+}
 
-
-// const spinner = ora('sorting import...')
-// spinner.start();
-
-
-//
-// spinner.succeed('sort success')
+program.parse(process.argv)
