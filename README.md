@@ -1,6 +1,10 @@
 # sort-import
 调整import排序plugin
-### 排序方法
+### 安装
+```
+npm install fast-sort-import -D
+```
+### 使用方法
 ```
 npx fast-sort-import sort <file>
 ```
@@ -15,3 +19,4 @@ npx fast-sort-import sort <file>
 ```
 目前只支持.vue，.js文件，不支持ts语法和其他文件
 ```
+
