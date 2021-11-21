@@ -5,9 +5,12 @@ const chalk = require("chalk");
 const fs = require("fs-extra");
 const fs2 = require("fs")
 const program = new commander.Command();
+const package = require('../package.json');
+
 // const spinner = ora('sorting import...')
 
 program
+    .version(package.version)
     .command('sort <source> [destination]')
     .description('sort import')
     .action((source, destination) => {
