@@ -11,13 +11,14 @@ const program = new commander.Command();
 
 program
     .version(package.version)
-    .command('sort <source>')
-    .description('sort import')
-    .action((source) => {
-        overWriteSortImport(source)
-        console.log(chalk.green('sort complete~🚀'))
+    .command('sort')
+    .argument('<sources...>')
+    .action((sources) => {
+        sources.forEach((source) => {
+            overWriteSortImport(source)
+            console.log(chalk.green(`${source} sort complete~🚀`))
+        });
     });
-
 
 function overWriteSortImport(file) {
     fs2.readFile(file, 'utf8', ((err, initCode) => {
@@ -36,7 +37,7 @@ function overWriteSortImport(file) {
         if(isVueFile && rule.test(initCode)) {
             // 需要处理
             needFormatCode = initCode.match(rule)[0]
-            const afterFormatCode = sortJSImport(needFormatCode)
+            const afterFormatCode = ' \n' + sortJSImport(needFormatCode) + ' \n';
             newCode = initCode.replace(rule, afterFormatCode)
         }
 
