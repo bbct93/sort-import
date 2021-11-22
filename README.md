@@ -6,7 +6,7 @@ npm install fast-sort-import -D
 ```
 ### 使用方法
 ```
-npx fast-sort-import sort <file>
+fast-sort-import sort <file>
 ```
 ### 排序规则
 ```

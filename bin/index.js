@@ -59,12 +59,13 @@ function sortJSImport(code) {
     const ast = parse(code, { sourceType: "module" });
     // 所有import节点
     const importDeclarationList = ast.program.body.filter(item => item.type === 'ImportDeclaration');
-    const firstList = importDeclarationList.filter(item => /^@[a-zA-Z]/.test(item.source.value))
-    const secondList = importDeclarationList.filter(item => /^@\//.test(item.source.value))
-    const thirdLit = importDeclarationList.filter(item => /^\//.test(item.source.value))
+    const firstList = importDeclarationList.filter(item => /^[a-zA-Z]/.test(item.source.value))
+    const secondList = importDeclarationList.filter(item => /^@[a-zA-Z]/.test(item.source.value))
+    const thirdLit = importDeclarationList.filter(item => /^@\//.test(item.source.value))
+    const fourthList = importDeclarationList.filter(item => /^\//.test(item.source.value))
     const lastList = importDeclarationList.filter(item => /^\./.test(item.source.value))
 
-    const rightList = [...firstList, ... secondList, ... thirdLit, ...lastList];
+    const rightList = Array.from(new Set([...firstList, ... secondList, ... thirdLit, ...fourthList, ...lastList, ...importDeclarationList]));
     ast.program.body = ast.program.body.filter(item => item.type !== 'ImportDeclaration');
     ast.program.body = [...rightList, ...ast.program.body];
     let newCode = generate(ast).code;
